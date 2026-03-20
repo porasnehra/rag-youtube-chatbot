@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-BACKEND_URL = "http://localhost:8000"
+BACKEND_URL = "https://rag-youtube-chatbot-1.onrender.com"
 
 st.set_page_config(page_title="YouTube RAG Platform", layout="centered", page_icon="📺")
 
