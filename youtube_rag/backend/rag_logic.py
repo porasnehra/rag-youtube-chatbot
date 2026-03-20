@@ -16,7 +16,6 @@ load_dotenv(env_path)
 VECTOR_STORE_PATH = os.path.join(os.path.dirname(__file__), "vector_stores")
 
 def extract_video_id(url: str) -> str:
-    # extracts video id from standard or short url
     pattern = r'(?:v=|\/)([0-9A-Za-z_-]{11}).*'
     match = re.search(pattern, url)
     if match:
@@ -42,17 +41,13 @@ def ingest_youtube_video(url: str) -> dict:
     if not docs:
         return {"status": "error", "message": "No captions available or failed to load video."}
 
-    # chunk text - drastically increased size to reduce total embedding API requests
     splitter = RecursiveCharacterTextSplitter(chunk_size=5000, chunk_overlap=500)
     chunks = splitter.split_documents(docs)
 
-    # Free Tier API limit prevents more than 100 requests per minute
-    # We truncate to 80 documents to ensure we never hit the hard limit on long videos
     if len(chunks) > 80:
         chunks = chunks[:80]
     
     try:
-        # Create embeddings and save to vector store
         embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
         vector_store = FAISS.from_documents(chunks, embeddings)
         
